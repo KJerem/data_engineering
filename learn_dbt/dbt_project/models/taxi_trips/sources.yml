@@ -1,0 +1,12 @@
+version: 2 #Version du format yaml
+
+sources:
+  - name: tlc_taxi_trips
+    meta:
+      external_location: 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-11.parquet'
+      formatter: oldstyle
+    tables:
+      - name: raw_yellow_tripdata
+
+
+      
