@@ -1,21 +1,106 @@
-
+# Ce fichier définit les tests unitaires de qualité des données pour le modèle de transformation 
+#des trajets en taxi jaune de New York. Chaque colonne du modèle est décrite avec 
+#une description et des tests associés pour garantir l'intégrité et la qualité des données.
 version: 2
 
 models:
-  - name: my_first_dbt_model
-    description: "A starter dbt model"
+  - name: transform # Nom du fichier de transformation (sans l'extension .sql, ici transform.sql)
+    description: "Dataset des trajets en taxi jaune de New York au cours de l'année 2024"
     columns:
-      - name: id
-        description: "The primary key for this table"
-        data_tests:
-          - unique
+      - name: tpep_pickup_datetime
+        description: "Date et heure de prise en charge du passager."
+        tests:
+          - not_null
+      
+      - name: tpep_dropoff_datetime
+        description: "Date et heure de dépose du passager."
+        tests:
+          - not_null
+      
+      - name: trip_duration_minutes
+        description: "Durée du trajet en minutes."
+        tests:
+          - not_null
+      
+      - name: trip_distance
+        description: "Distance du trajet en miles."
+        tests:
+          - not_null
+      
+      - name: passenger_count
+        description: "Nombre de passagers transportés."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: INTEGER
+      
+      - name: payment_method
+        description: "Méthode de paiement utilisée pour le trajet."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Credit Card', 'Cash']
+      
+      - name: store_and_fwd_flag
+        description: "Indique si le trajet a été stocké et transmis ultérieurement."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['N']
+      
+      - name: PULocationID
+        description: "ID de l'emplacement de prise en charge du passager."
+        tests:
+          - not_null
+      
+      - name: DOLocationID
+        description: "ID de l'emplacement de dépose du passager."
+        tests:
           - not_null
 
-  - name: my_second_dbt_model
-    description: "A starter dbt model"
-    columns:
-      - name: id
-        description: "The primary key for this table"
-        data_tests:
-          - unique
+      - name: fare_amount
+        description: "Le prix du trajet calculé en fonction du temps et de la distance par le taximètre."
+        tests:
+          - not_null
+      
+      - name: total_amount
+        description: "Le montant total payé par le passager."
+        tests:
+          - not_null
+      
+      - name: tip_amount
+        description: "Le montant du pourboire payé par le passager."
+        tests:
+          - not_null
+
+      - name: tolls_amount
+        description: "Le montant des péages payés pendant le trajet."
+        tests:
+          - not_null
+      
+      - name: improvement_surcharge
+        description: "Supplément d'amélioration appliqué pour le trajet effectué."
+        tests:
+          - not_null
+      
+      - name: congestion_surcharge
+        description: "Supplément de congestion appliqué pour le trajet effectué"
+        tests:
+          - not_null
+
+      - name: extra
+        description: "Extra charges appliquées pour le trajet."
+        tests:
+          - not_null
+
+      - name: mta_tax
+        description: "Taxe MTA payée pour le trajet effectué."
+        tests:
+          - not_null
+
+      - name: Airport_fee
+        description: "Frais d'aéroport appliqués pour le trajet effectué."
+        tests:
           - not_null
